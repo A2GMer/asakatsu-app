@@ -1,60 +1,25 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { Amplify } from 'aws-amplify';
 
-import { DataStore } from 'aws-amplify/datastore';
-import { Posts, Users } from './models';
-import { CommentCard } from './ui-components';
+import { Authenticator } from '@aws-amplify/ui-react';
+import '@aws-amplify/ui-react/styles.css';
 
-import { useEffect, useState } from 'react';
+import awsExports from './aws-exports';
 
-function App() {
-  const [posts, setPosts] = useState([]);
+import PostsList from './components/PostsList';
 
-  const getPosts = async () => {
-    const data = await DataStore.query(Posts);
-    
-    const postsWithUsers = await Promise.all(
-      data.map(async post => {
-        const user = await DataStore.query(Users, post.postsUsersId);
-        return { ...post, Users: user };
-      })
-    );
+Amplify.configure(awsExports);
 
-    setPosts(postsWithUsers);
-  }
-
-  useEffect(() => {
-    getPosts()
-  }, []);
-
+export default function App() {
   return (
-    <div>
-      {posts.map(post => (
-        <CommentCard 
-          posts={post} 
-          users={post.Users} 
-          key={post.id} 
-          overrides={{
-            Share: {
-              onClick: async () => {
-                const postToChange = await DataStore.query(Posts, post.id);
-                await DataStore.save(Posts.copyOf(postToChange, updated => {
-                  updated.likes += 1;
-                }));
-
-                // ローカルステートを更新
-                setPosts(prevPosts =>
-                  prevPosts.map(p =>
-                    p.id === post.id ? { ...p, likes: p.likes + 1 } : p
-                  )
-                );
-              }
-            }
-          }}
-        />
-      ))}
-    </div>
+    <Authenticator>
+      {({ signOut, user }) => (
+        <main>
+          <h1>Hello {user.username}</h1>
+          <button onClick={signOut}>Sign out</button>
+          <PostsList />
+        </main>
+      )}
+    </Authenticator>
   );
 }
-
-export default App;
