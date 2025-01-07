@@ -12,8 +12,7 @@ function App() {
 
   const getPosts = async () => {
     const data = await DataStore.query(Posts);
-    // setPosts(data);
-    // Usersデータを解決
+    
     const postsWithUsers = await Promise.all(
       data.map(async post => {
         const user = await DataStore.query(Users, post.postsUsersId);
@@ -30,11 +29,30 @@ function App() {
 
   return (
     <div>
-      { posts.map(post => {
-          return <CommentCard posts={post} users={post.Users} key={post.id} />;
-        }
-        )
-      }
+      {posts.map(post => (
+        <CommentCard 
+          posts={post} 
+          users={post.Users} 
+          key={post.id} 
+          overrides={{
+            Share: {
+              onClick: async () => {
+                const postToChange = await DataStore.query(Posts, post.id);
+                await DataStore.save(Posts.copyOf(postToChange, updated => {
+                  updated.likes += 1;
+                }));
+
+                // ローカルステートを更新
+                setPosts(prevPosts =>
+                  prevPosts.map(p =>
+                    p.id === post.id ? { ...p, likes: p.likes + 1 } : p
+                  )
+                );
+              }
+            }
+          }}
+        />
+      ))}
     </div>
   );
 }
