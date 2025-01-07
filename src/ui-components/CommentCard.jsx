@@ -27,6 +27,18 @@ export default function CommentCard(props) {
   const likeOnMouseLeave = () => {
     setLikeBackgroundColor("transparent");
   };
+  const formatToJapaneseTime = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleString("ja-JP", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    });
+  };
+  
   return (
     <Flex
       gap="16px"
@@ -182,7 +194,7 @@ export default function CommentCard(props) {
                 position="relative"
                 padding="0px 0px 0px 0px"
                 whiteSpace="pre-wrap"
-                children={posts?.created_at}
+                children={formatToJapaneseTime(posts?.created_at)}
                 {...getOverrideProps(overrides, "Timestamp")}
               ></Text>
             </Flex>
