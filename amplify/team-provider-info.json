@@ -10,6 +10,14 @@
       "StackName": "amplify-asakatsu-staging-d7b83",
       "StackId": "arn:aws:cloudformation:us-east-1:312216841954:stack/amplify-asakatsu-staging-d7b83/26e26d70-cc2e-11ef-bc10-0affd4b49c99",
       "AmplifyAppId": "d2p33cnwj24lo5"
+    },
+    "categories": {
+      "auth": {
+        "asakatsu9254c360": {}
+      },
+      "api": {
+        "asakatsu": {}
+      }
     }
   }
 }
