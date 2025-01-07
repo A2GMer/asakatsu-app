@@ -1,0 +1,14 @@
+type Users @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  profile_image: AWSURL
+  name: String
+}
+
+type Posts @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  content: String!
+  created_at: AWSDateTime!
+  likes: Int
+  Users: Users @hasOne
+}
+ 
